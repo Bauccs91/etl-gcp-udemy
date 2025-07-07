@@ -35,6 +35,7 @@ WHEN MATCHED AND
         target.is_active = false,
         target.effective_end_date = current_timestamp();
 
+
 --Step 3: Insert New or Updated Records
 MERGE INTO  `etl-lt-002.silver_dataset.customers` target
 USING 
