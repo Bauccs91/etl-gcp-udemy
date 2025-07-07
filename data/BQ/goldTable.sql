@@ -17,6 +17,7 @@ JOIN `etl-lt-002.silver_dataset.categories` c ON p.category_id = c.category_id
 WHERE o.is_active = TRUE
 GROUP BY 1, 2, 3, 4, 5;
 
+
 -----------------------------------------------------------------------------------------------------------
 -- 2. Customer Engagement Metrics (customer_engagement)
 
