@@ -14,7 +14,7 @@ from airflow.providers.google.cloud.operators.dataproc import (
 PROJECT_ID = "etl-lt-002"
 REGION = "us-central1"
 CLUSTER_NAME = "my-demo-cluster"
-COMPOSER_BUCKET = "us-central1-composr-etl-lt--bf39e512-bucket"
+COMPOSER_BUCKET = "us-central1-composr-etl-lt-40492829-bucket"
 
 GCS_JOB_FILE_1 = f"gs://{COMPOSER_BUCKET}/data/INGESTION/retailerMysqlToLanding.py"
 PYSPARK_JOB_1 = {
