@@ -8,23 +8,23 @@ import json
 spark = SparkSession.builder.appName("supplierMySQLToLanding").getOrCreate()
 
 # Google Cloud Storage (GCS) Configuration variables
-GCS_BUCKET = "retailer-datalake-project-27032025"
-LANDING_PATH = f"gs://{GCS_BUCKET}/landing/supplier-db/"
-ARCHIVE_PATH = f"gs://{GCS_BUCKET}/landing/supplier-db/archive/"
+GCS_BUCKET = "rtlr-datalake-project"
+LANDING_PATH = f"gs://{GCS_BUCKET}/landing/supplier_db/"
+ARCHIVE_PATH = f"gs://{GCS_BUCKET}/landing/supplier_db/archive/"
 CONFIG_FILE_PATH = f"gs://{GCS_BUCKET}/configs/supplier_config.csv"
 
 # BigQuery Configuration
-BQ_PROJECT = "avd-databricks-demo"
+BQ_PROJECT = "etl-lt-002"
 BQ_AUDIT_TABLE = f"{BQ_PROJECT}.temp_dataset.audit_log"
 BQ_LOG_TABLE = f"{BQ_PROJECT}.temp_dataset.pipeline_logs"
 BQ_TEMP_PATH = f"{GCS_BUCKET}/temp/"  
 
 # MySQL Configuration
 MYSQL_CONFIG = {
-    "url": "jdbc:mysql://34.57.241.120:3306/supplierDB?useSSL=false&allowPublicKeyRetrieval=true",
+    "url": "jdbc:mysql://35.192.12.198:3306/suppliersdb?useSSL=false&allowPublicKeyRetrieval=true",
     "driver": "com.mysql.cj.jdbc.Driver",
-    "user": "myuser",
-    "password": "mypass"
+    "user": "luistrocco",
+    "password": "Luis!2201"
 }
 
 # Initialize GCS & BigQuery Clients
@@ -33,6 +33,7 @@ bq_client = bigquery.Client()
 
 # Logging Mechanism
 log_entries = []  # Stores logs before writing to GCS
+
 ##---------------------------------------------------------------------------------------------------##
 def log_event(event_type, message, table=None):
     """Log an event and store it in the log list"""
@@ -82,7 +83,7 @@ def read_config_file():
 ##---------------------------------------------------------------------------------------------------##
 # Function to Move Existing Files to Archive
 def move_existing_files_to_archive(table):
-    blobs = list(storage_client.bucket(GCS_BUCKET).list_blobs(prefix=f"landing/supplier-db/{table}/"))
+    blobs = list(storage_client.bucket(GCS_BUCKET).list_blobs(prefix=f"landing/supplier_db/{table}/"))
     existing_files = [blob.name for blob in blobs if blob.name.endswith(".json")]
     
     if not existing_files:
@@ -97,7 +98,7 @@ def move_existing_files_to_archive(table):
         year, month, day = date_part[-4:], date_part[2:4], date_part[:2]
         
         # Move to Archive
-        archive_path = f"landing/supplier-db/archive/{table}/{year}/{month}/{day}/{file.split('/')[-1]}"
+        archive_path = f"landing/supplier_db/archive/{table}/{year}/{month}/{day}/{file.split('/')[-1]}"
         destination_blob = storage_client.bucket(GCS_BUCKET).blob(archive_path)
         
         # Copy file to archive and delete original
@@ -151,7 +152,7 @@ def extract_and_save_to_landing(table, load_type, watermark_col):
         
         # Generate File Path in GCS
         today = datetime.datetime.today().strftime('%d%m%Y')
-        JSON_FILE_PATH = f"landing/supplier-db/{table}/{table}_{today}.json"
+        JSON_FILE_PATH = f"landing/supplier_db/{table}/{table}_{today}.json"
         
         # Upload JSON to GCS
         bucket = storage_client.bucket(GCS_BUCKET)
